@@ -1,15 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using AutomatedTellerMachine.Models;
+using Microsoft.AspNet.Identity;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace AutomatedTellerMachine.Controllers
 {
     public class HomeController : Controller
     {
+
+        private ApplicationDbContext db = new ApplicationDbContext();
+
+        [Authorize]
         public ActionResult Index()
         {
+
+            var userId = User.Identity.GetUserId();
+
+            var checkingAccountId = db.CheckingAccoutnts.Where(a => a.ApplicationUserId == userId).First().Id;
+
+            ViewBag.CheckingAccountId = checkingAccountId;
             return View();
         }
 
@@ -22,9 +31,34 @@ namespace AutomatedTellerMachine.Controllers
 
         public ActionResult Contact()
         {
-            ViewBag.Message = "Your contact page.";
+            ViewBag.Message = "Having truble send s a message";
 
             return View();
+        }
+
+        [HttpPost]
+        public ActionResult Contact(string message)
+        {
+            //Do 
+
+            ViewBag.Message = "Thanks, got it";
+
+            return View();
+        }
+
+        public ActionResult Foo()
+        {
+            return View("About");
+        }
+
+        public ActionResult Serial(string letterCase)
+        {
+            var serial = "ASPNETMVCATM1";
+            if (letterCase == "lower")
+            {
+                return Content(serial.ToLower());
+            }
+            return Content(serial);
         }
     }
 }

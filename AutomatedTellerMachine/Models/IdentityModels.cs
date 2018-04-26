@@ -1,8 +1,8 @@
-﻿using System.Data.Entity;
+﻿using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using System.Data.Entity;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace AutomatedTellerMachine.Models
 {
@@ -29,5 +29,9 @@ namespace AutomatedTellerMachine.Models
         {
             return new ApplicationDbContext();
         }
+
+        public DbSet<CheckingAccount> CheckingAccoutnts { get; set; }
+
+        public DbSet<AutomatedTellerMachine.Models.Transaction> Transactions { get; set; }
     }
 }
