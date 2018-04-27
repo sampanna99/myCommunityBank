@@ -27,16 +27,31 @@ namespace AutomatedTellerMachine.Controllers
         // GET: CheckingAccount/Details/5
         public ActionResult Details()
         {
-
-            var checkingAccount = new CheckingAccount
-            {
-                AccountNumber = "0000123456",
-                FirstName = "Michael",
-                LastName = "Scott",
-                Balance = 500
-            };
+            var userId = User.Identity.GetUserId();
+            var checkingAccount = db.CheckingAccoutnts.Where(a => a.ApplicationUserId == userId).First();
+            //var checkingAccount = new CheckingAccount
+            //{
+            //    AccountNumber = "0000123456",
+            //    FirstName = "Michael",
+            //    LastName = "Scott",
+            //    Balance = 500
+            //};
             return View(checkingAccount);
         }
+
+        [Authorize(Roles = "Admin")]
+        public ActionResult DetailsForAdmin(int id)
+        {
+            var checkingAccount = db.CheckingAccoutnts.Find(id);
+            return View("Details", checkingAccount);
+        }
+
+        [Authorize(Roles = "Admin")]
+        public ActionResult List()
+        {
+            return View(db.CheckingAccoutnts.ToList());
+        }
+
 
         // GET: CheckingAccount/Create
         public ActionResult Create()

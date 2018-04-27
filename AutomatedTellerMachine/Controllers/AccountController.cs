@@ -4,6 +4,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -153,6 +154,7 @@ namespace AutomatedTellerMachine.Controllers
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    UserManager.AddClaim(user.Id, new Claim(ClaimTypes.GivenName, model.FirstName));
 
                     var service = new CheckingAccountService(HttpContext.GetOwinContext().Get<ApplicationDbContext>());
                     service.CreateCheckingAccount(model.FirstName, model.LastName, user.Id, 0);
