@@ -1,4 +1,5 @@
 ﻿using AutomatedTellerMachine.Models;
+using AutomatedTellerMachine.Services;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
@@ -152,19 +153,22 @@ namespace AutomatedTellerMachine.Controllers
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    var db = new ApplicationDbContext();
-                    var accountNumber = (12345 + db.CheckingAccoutnts.Count()).ToString().PadLeft(10, '0');
-                    var checkingAccount =
-                        new CheckingAccount()
-                        {
-                            FirstName = model.FirstName,
-                            LastName = model.LastName,
-                            AccountNumber = accountNumber,
-                            Balance = 0,
-                            ApplicationUserId = user.Id
-                        };
-                    db.CheckingAccoutnts.Add(checkingAccount);
-                    db.SaveChanges();
+
+                    var service = new CheckingAccountService(HttpContext.GetOwinContext().Get<ApplicationDbContext>());
+                    service.CreateCheckingAccount(model.FirstName, model.LastName, user.Id, 0);
+                    //var db = new ApplicationDbContext();
+                    //var accountNumber = (12345 + db.CheckingAccoutnts.Count()).ToString().PadLeft(10, '0');
+                    //var checkingAccount =
+                    //    new CheckingAccount()
+                    //    {
+                    //        FirstName = model.FirstName,
+                    //        LastName = model.LastName,
+                    //        AccountNumber = accountNumber,
+                    //        Balance = 0,
+                    //        ApplicationUserId = user.Id
+                    //    };
+                    //db.CheckingAccoutnts.Add(checkingAccount);
+                    //db.SaveChanges();
 
                     await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
 
@@ -385,6 +389,10 @@ namespace AutomatedTellerMachine.Controllers
                     result = await UserManager.AddLoginAsync(user.Id, info.Login);
                     if (result.Succeeded)
                     {
+                        var service = new CheckingAccountService(HttpContext.GetOwinContext().Get<ApplicationDbContext>());
+                        service.CreateCheckingAccount("Facebook", "User", user.Id, 500);
+
+
                         await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
                         return RedirectToLocal(returnUrl);
                     }
