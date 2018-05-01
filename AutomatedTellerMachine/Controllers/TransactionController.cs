@@ -1,4 +1,5 @@
 ﻿using AutomatedTellerMachine.Models;
+using AutomatedTellerMachine.Services;
 using System.Web.Mvc;
 
 namespace AutomatedTellerMachine.Controllers
@@ -31,6 +32,9 @@ namespace AutomatedTellerMachine.Controllers
             {
                 db.Transactions.Add(transaction);
                 db.SaveChanges();
+
+                var service = new CheckingAccountService(db);
+                service.UpdateBalance(transaction.CheckingAccountId);
 
                 return RedirectToAction("Index", "Home");
 

@@ -41,9 +41,10 @@ namespace AutomatedTellerMachine.Controllers
         {
             //Do 
 
-            ViewBag.Message = "Thanks, got it";
+            ViewBag.TheMessage = "Thanks, got it";
 
-            return View();
+            return PartialView("_ContactThanks");
+            //return View();
         }
 
         public ActionResult Foo()
